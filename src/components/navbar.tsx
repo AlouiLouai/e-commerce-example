@@ -38,6 +38,7 @@ export function Navbar() {
     const { items, removeItem, clearCart, totalItems, totalPrice } = useCart();
 
     const isSeller = user?.role === 'seller';
+    const isAdmin = user?.role === 'admin';
 
     return (
         <div className="flex flex-col w-full">
@@ -72,6 +73,12 @@ export function Navbar() {
                                 <Link href="/products" className="text-xl font-medium hover:text-emerald-600 transition-colors">Boutique</Link>
                                 <Link href="/about" className="text-xl font-medium hover:text-emerald-600 transition-colors">Notre Mission</Link>
                                 <Link href="/contact" className="text-xl font-medium hover:text-emerald-600 transition-colors">Contact</Link>
+                                {user?.role === 'admin' && (
+                                    <Link href="/admin" className="text-xl font-bold text-indigo-700 hover:text-indigo-600 transition-colors">Admin Dashboard</Link>
+                                )}
+                                {user?.role === 'seller' && (
+                                    <Link href="/dashboard" className="text-xl font-bold text-emerald-700 hover:text-emerald-600 transition-colors">Espace Vendeur</Link>
+                                )}
                                 {!isLoggedIn ? (
                                     <Link href="/login" className="mt-4">
                                         <Button className="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 shadow-emerald-glow">Se connecter</Button>
@@ -83,7 +90,9 @@ export function Navbar() {
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="font-bold text-sm text-emerald-950">{user?.name}</span>
-                                            <span className="text-xs uppercase text-emerald-600 font-semibold tracking-wide">{user?.role === 'seller' ? 'Vendeur Pro' : 'Client Premium'}</span>
+                                            <span className="text-xs uppercase text-emerald-600 font-semibold tracking-wide">
+                                                {user?.role === 'seller' ? 'Vendeur Pro' : user?.role === 'admin' ? 'Admin' : 'Client Premium'}
+                                            </span>
                                         </div>
                                     </div>
                                 )}
@@ -144,7 +153,9 @@ export function Navbar() {
                             <div className="flex items-center gap-3">
                                 <div className="hidden md:flex flex-col items-end leading-tight mr-1">
                                     <span className="text-xs font-bold text-emerald-900">{user?.name}</span>
-                                    <span className="text-[10px] uppercase text-emerald-500 font-semibold tracking-wider">{user?.role === 'seller' ? 'Vendeur' : 'Client'}</span>
+                                    <span className="text-[10px] uppercase text-emerald-500 font-semibold tracking-wider">
+                                        {user?.role === 'seller' ? 'Vendeur' : user?.role === 'admin' ? 'Admin' : 'Client'}
+                                    </span>
                                 </div>
 
                                 <DropdownMenu>
@@ -164,6 +175,14 @@ export function Navbar() {
                                                 </Link>
                                             </DropdownMenuItem>
                                         )}
+                                        {user?.role === 'admin' && (
+                                            <DropdownMenuItem asChild className="cursor-pointer rounded-lg">
+                                                <Link href="/admin" className="flex items-center gap-2">
+                                                    <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
+                                                    Admin Dashboard
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        )}
                                         {user?.role === 'client' && (
                                             <DropdownMenuItem asChild className="cursor-pointer rounded-lg">
                                                 <Link href="/onboarding" className="flex items-center gap-2">
@@ -180,7 +199,7 @@ export function Navbar() {
                                     </DropdownMenuContent>
                                 </DropdownMenu>
 
-                                {!isSeller && (
+                                {!isSeller && !isAdmin && (
                                     <Sheet>
                                         <SheetTrigger asChild>
                                             <Button variant="outline" size="icon" className="relative border-emerald-200 hover:bg-emerald-50 text-emerald-700 h-10 w-10 rounded-full transition-all hover:shadow-md">

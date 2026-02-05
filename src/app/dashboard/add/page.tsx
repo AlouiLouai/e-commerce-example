@@ -3,6 +3,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { ArrowLeft, Save, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,9 +13,11 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { allergyFilters, categories } from "@/lib/data"
+import { useAuth } from "@/components/auth-provider"
 
 export default function AddProductPage() {
     const router = useRouter()
+    const { user, isLoggedIn } = useAuth()
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -23,6 +26,20 @@ export default function AddProductPage() {
             router.push("/dashboard")
         }, 1000)
     }
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            router.push("/login")
+            return
+        }
+        if (user?.role === "admin") {
+            router.push("/admin")
+            return
+        }
+        if (user?.role !== "seller") {
+            router.push("/")
+        }
+    }, [isLoggedIn, user, router])
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">

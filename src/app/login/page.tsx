@@ -15,7 +15,7 @@ export default function LoginPage() {
     const { login } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
 
-    const handleLogin = (role: "client" | "seller") => {
+    const handleLogin = (role: "client" | "seller" | "admin") => {
         setIsLoading(true)
         // Simulate auth delay
         setTimeout(() => {
@@ -23,8 +23,10 @@ export default function LoginPage() {
             login(role);
             if (role === "client") {
                 router.push("/onboarding")
-            } else {
+            } else if (role === "seller") {
                 router.push("/dashboard")
+            } else {
+                router.push("/admin")
             }
         }, 1000)
     }
@@ -98,7 +100,7 @@ export default function LoginPage() {
                         </div>
 
                         <Tabs defaultValue="client" className="w-full">
-                            <TabsList className="grid w-full grid-cols-2 mb-8 h-14 bg-white/80 backdrop-blur-sm p-1.5 rounded-2xl shadow-lg border border-emerald-100/50">
+                            <TabsList className="grid w-full grid-cols-3 mb-8 h-14 bg-white/80 backdrop-blur-sm p-1.5 rounded-2xl shadow-lg border border-emerald-100/50">
                                 <TabsTrigger
                                     value="client"
                                     className="rounded-xl h-full data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-600 data-[state=active]:to-emerald-500 data-[state=active]:text-white data-[state=active]:shadow-emerald-glow font-bold transition-all"
@@ -110,6 +112,12 @@ export default function LoginPage() {
                                     className="rounded-xl h-full data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-600 data-[state=active]:to-orange-500 data-[state=active]:text-white data-[state=active]:shadow-warm-glow font-bold transition-all"
                                 >
                                     <Store className="w-4 h-4 mr-2" /> Vendeur
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="admin"
+                                    className="rounded-xl h-full data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-indigo-500 data-[state=active]:text-white data-[state=active]:shadow-lg font-bold transition-all"
+                                >
+                                    <ShieldCheck className="w-4 h-4 mr-2" /> Admin
                                 </TabsTrigger>
                             </TabsList>
 
@@ -199,6 +207,51 @@ export default function LoginPage() {
 
                                     <div className="text-center text-sm text-gray-400 pt-2 flex items-center justify-center gap-1">
                                         <Lock className="w-3 h-3" /> Accès sécurisé
+                                    </div>
+                                </div>
+                            </TabsContent>
+
+                            {/* Admin Tab */}
+                            <TabsContent value="admin">
+                                <div className="bg-white/90 backdrop-blur-xl border border-indigo-100/50 shadow-2xl rounded-3xl p-8 space-y-6">
+                                    <div className="text-center pb-2">
+                                        <div className="inline-flex h-14 w-14 rounded-full bg-gradient-to-br from-indigo-100 to-indigo-200 items-center justify-center mb-4">
+                                            <ShieldCheck className="h-7 w-7 text-indigo-700" />
+                                        </div>
+                                        <h2 className="text-2xl font-black text-indigo-950">Espace Admin</h2>
+                                        <p className="text-sm text-gray-500 mt-1">Supervisez la plateforme et ses performances</p>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="email-admin" className="text-sm font-bold text-gray-700">Email Admin</Label>
+                                            <Input
+                                                id="email-admin"
+                                                type="email"
+                                                placeholder="admin@exemple.com"
+                                                className="h-12 rounded-xl border-indigo-100 focus:border-indigo-400 bg-gray-50/50"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="password-admin" className="text-sm font-bold text-gray-700">Mot de passe</Label>
+                                            <Input
+                                                id="password-admin"
+                                                type="password"
+                                                className="h-12 rounded-xl border-indigo-100 focus:border-indigo-400 bg-gray-50/50"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <Button
+                                        className="w-full h-14 text-lg font-black rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all"
+                                        onClick={() => handleLogin("admin")}
+                                        disabled={isLoading}
+                                    >
+                                        {isLoading ? "Connexion..." : "Accéder à l'Admin"}
+                                    </Button>
+
+                                    <div className="text-center text-sm text-gray-400 pt-2 flex items-center justify-center gap-1">
+                                        <Lock className="w-3 h-3" /> Accès restreint
                                     </div>
                                 </div>
                             </TabsContent>

@@ -19,6 +19,7 @@ export function ProductActions({ product }: ProductActionsProps) {
     const [added, setAdded] = useState(false)
 
     const isSeller = user?.role === 'seller'
+    const isAdmin = user?.role === 'admin'
 
     const handleAdd = () => {
         if (!isLoggedIn) {
@@ -30,7 +31,7 @@ export function ProductActions({ product }: ProductActionsProps) {
         setTimeout(() => setAdded(false), 2000)
     }
 
-    if (isSeller) {
+    if (isSeller || isAdmin) {
         return (
             <div className="p-8 bg-gradient-to-br from-white to-gray-50/50 rounded-3xl border border-gray-100 shadow-xl space-y-6 animate-fade-in">
                 <div className="flex items-end gap-2 justify-center lg:justify-start">
@@ -44,8 +45,12 @@ export function ProductActions({ product }: ProductActionsProps) {
                             <ShieldCheck className="h-6 w-6 text-white" />
                         </div>
                     </div>
-                    <p className="text-sm text-orange-900 font-bold mb-1">Mode Vendeur Actif</p>
-                    <p className="text-xs text-orange-700/80 leading-relaxed">Gérez vos produits depuis votre espace dédié pour modifier les prix, stocks et descriptions.</p>
+                    <p className="text-sm text-orange-900 font-bold mb-1">{isAdmin ? "Mode Admin Actif" : "Mode Vendeur Actif"}</p>
+                    <p className="text-xs text-orange-700/80 leading-relaxed">
+                        {isAdmin
+                            ? "Accès complet pour superviser les produits, commandes et comptes."
+                            : "Gérez vos produits depuis votre espace dédié pour modifier les prix, stocks et descriptions."}
+                    </p>
                 </div>
             </div>
         )

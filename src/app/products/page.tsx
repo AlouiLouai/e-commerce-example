@@ -1,7 +1,7 @@
 "use client" // Since we use ProductCard which now uses Context
 
 import { useSearchParams } from "next/navigation"
-import { useState } from "react"
+import { Suspense, useState } from "react"
 import { ProductCard } from "@/components/product-card"
 import { ProductModal } from "@/components/product-modal"
 import { products, categories, allergyFilters, Product } from "@/lib/data"
@@ -21,7 +21,7 @@ import {
 
 const PRODUCTS_PER_PAGE = 8;
 
-export default function ProductsPage() {
+function ProductsPageContent() {
     const searchParams = useSearchParams()
     const filterAllergy = searchParams.get("allergy")
     const filterCategory = searchParams.get("category")
@@ -190,5 +190,19 @@ export default function ProductsPage() {
                 onClose={() => setSelectedProduct(null)}
             />
         </div>
+    )
+}
+
+export default function ProductsPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="min-h-screen bg-[#FDFDFD] flex items-center justify-center text-gray-500">
+                    Chargement de la boutique...
+                </div>
+            }
+        >
+            <ProductsPageContent />
+        </Suspense>
     )
 }

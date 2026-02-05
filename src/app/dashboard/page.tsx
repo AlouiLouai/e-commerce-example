@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Package, Plus, Settings, LogOut, Search, MoreHorizontal, Pencil, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -10,11 +10,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/components/auth-provider"
+import { useRouter } from "next/navigation"
 import { products as initialProducts, Product } from "@/lib/data"
 import { ProductEditModal } from "@/components/product-edit-modal"
 
 export default function Dashboard() {
-    const { logout } = useAuth()
+    const router = useRouter()
+    const { logout, user, isLoggedIn } = useAuth()
     const [products, setProducts] = useState(initialProducts)
     const [searchTerm, setSearchTerm] = useState("")
     const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -33,6 +35,20 @@ export default function Dashboard() {
         setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p))
         setEditingProduct(null) // Close modal after saving
     }
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            router.push("/login")
+            return
+        }
+        if (user?.role === "admin") {
+            router.push("/admin")
+            return
+        }
+        if (user?.role !== "seller") {
+            router.push("/")
+        }
+    }, [isLoggedIn, user, router])
 
     const filteredProducts = products.filter(p =>
         p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
